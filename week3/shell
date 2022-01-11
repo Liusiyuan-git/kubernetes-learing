@@ -1,0 +1,7 @@
+docker login
+docker build -t evainstant/geek.time.liusiyuan.homework.week3.httpserver:v1 .
+docker push evainstant/geek.time.liusiyuan.homework.week3.httpserver:v1
+docker run -itd -p 8080:8080 --name httpserver evainstant/geek.time.liusiyuan.homework.week3.httpserver:v1
+docker inspect -f {{.State.Pid}} httpserver
+nsenter -n -t10592 ip addr
+docker logs httpserver
