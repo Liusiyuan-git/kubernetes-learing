@@ -1,6 +1,12 @@
-FROM golang:1.15 AS build
-RUN git clone https://github.com/Liusiyuan-git/kubernetes-learing.git
-WORKDIR kubernetes-learing/week3
-RUN go mod init week3 && go build -o httpserver week3
-ENTRYPOINT ["/go/kubernetes-learing/week3/httpserver"]
+FROM golang:1.17 AS builder
+ENV GO111MODULE=off \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+WORKDIR /build
+COPY . .
+RUN go build -o httpserver .
+FROM scratch
+COPY --from=builder /build/httpserver /
 EXPOSE 8080
+ENTRYPOINT ["/httpserver"]
