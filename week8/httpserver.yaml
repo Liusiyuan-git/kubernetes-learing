@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpserver-deployment
+  labels:
+    app: httpserver-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: httpserver
+      labels:
+        app: httpserver
+    spec:
+      containers:
+        - name: httpserver
+          image: evainstant/geek.time.liusiyuan.homework.week8.httpserver:v1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - 127.0.0.1:8080/healthz
+            periodSeconds: 5
+            initialDelaySeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["bin/sh","-c","curl 127.0.0.1:8080/shutdown"]
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - mountPath: /log
+              name: httpserver-log
+      restartPolicy: Always
+      volumes:
+        - name: httpserver-log
+          hostPath:
+            path: /home/log
+  selector:
+    matchLabels:
+      app: httpserver

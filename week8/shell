@@ -1,0 +1,3 @@
+docker login
+docker build -t evainstant/geek.time.liusiyuan.homework.week8.httpserver:v1 .
+docker push evainstant/geek.time.liusiyuan.homework.week8.httpserver:v1
