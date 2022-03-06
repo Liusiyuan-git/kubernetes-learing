@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  tls:
+    - hosts:
+        - httpserver.com
+      secretName: httpserver-secret
+  rules:
+    - host: httpserver.com
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: httpserver-service
+                port:
+                  number: 8080
