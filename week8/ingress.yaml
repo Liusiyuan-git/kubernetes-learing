@@ -3,17 +3,19 @@ kind: Ingress
 metadata:
   name: ingress
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - httpserver.com
-      secretName: httpserver-secret
+    - secretName: httpserver-secret
   rules:
     - host: httpserver.com
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
               service:
                 name: httpserver-service
                 port:
-                  number: 8080
+                  number: 80
