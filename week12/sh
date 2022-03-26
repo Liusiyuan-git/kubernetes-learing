@@ -1,0 +1,13 @@
+kubectl apply -f jaeger.yaml
+kubectl edit configmap istio -n istio-system
+set tracing.sampling=100
+kubectl create ns tracing
+kubectl label ns tracing istio-injection=enabled
+kubectl -n tracing apply -f service0.yaml
+kubectl -n tracing apply -f service1.yaml
+kubectl -n tracing apply -f service2.yaml
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=week12 Inc./CN=*.week12.io' -keyout week12.io.key -out week12.io.crt
+kubectl create -n istio-system secret tls week12-credential --key=week12.io.key --cert=week12.io.crt
+kubectl apply -f istio-specs.yaml -n tracing
+for i in {1..100}; do curl --resolve httpserver.week12.io:443:10.1.118.48 https://httpserver.week12.io/service0 -v -k; done
+istioctl dashboard jaeger --address 0.0.0.0
